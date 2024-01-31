@@ -41,8 +41,8 @@ const speciesPost = async (
 ) => {
   try {
     req.body.location = {
+      ...req.body.location,
       type: 'Point',
-      coordinates: req.body.location.coordinates,
     };
     const species = await SpeciesModel.create(req.body);
     res.status(201).json({message: 'Species created', _id: species._id});
@@ -57,6 +57,11 @@ const speciesPut = async (
   next: NextFunction
 ) => {
   try {
+    req.body.location = {
+      ...req.body.location,
+      type: 'Point',
+    };
+
     const species = await SpeciesModel.findByIdAndUpdate(
       req.params.id,
       req.body,
