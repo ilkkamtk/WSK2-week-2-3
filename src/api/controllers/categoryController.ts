@@ -68,4 +68,4 @@ const categoryPut = async (
   }
 };
 
-export {categoryListGet, categoryGet, categoryPost};
+export {categoryListGet, categoryGet, categoryPost, categoryPut};
