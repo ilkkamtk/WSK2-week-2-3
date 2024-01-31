@@ -1,3 +1,4 @@
+import {Point} from 'geojson';
 import {Types} from 'mongoose';
 
 type Category = {
@@ -6,10 +7,11 @@ type Category = {
 };
 
 type Animal = {
-  animal_id: number;
+  _id: Types.ObjectId;
   animal_name: string;
-  species: number;
+  species: Types.ObjectId;
   birthdate: Date;
+  gender: 'Male' | 'Female';
 };
 
 type FullAnimal = Omit<Animal, 'species'> & {
@@ -17,10 +19,11 @@ type FullAnimal = Omit<Animal, 'species'> & {
 };
 
 type Species = {
-  species_id: number;
+  _id: Types.ObjectId;
   species_name: string;
-  category: number;
+  category: Types.ObjectId;
   image: string;
+  location: Point;
 };
 
 type FullSpecies = Omit<Species, 'category'> & {
