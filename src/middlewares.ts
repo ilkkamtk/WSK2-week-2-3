@@ -3,6 +3,7 @@ import imageFromWikipedia from './functions/imageFromWikipedia';
 import {ErrorResponse} from './types/MessageTypes';
 import CustomError from './classes/CustomError';
 import {validationResult} from 'express-validator';
+import {Species} from './types/DBTypes';
 
 const notFound = (req: Request, res: Response, next: NextFunction) => {
   const error = new CustomError(`🔍 - Not Found - ${req.originalUrl}`, 404);
@@ -25,12 +26,15 @@ const errorHandler = (
 };
 
 const getWikiImage = async (
-  req: Request,
+  req: Request<{}, {}, Omit<Species, '_id'>>,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const {species_name} = req.body;
+    if (!species_name) {
+      next();
+    }
     const image = await imageFromWikipedia(species_name);
     req.body.image = image;
     next();

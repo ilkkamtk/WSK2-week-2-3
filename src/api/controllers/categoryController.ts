@@ -80,7 +80,6 @@ const categoryDelete = async (
     if (!category) {
       throw new CustomError('Category not found', 404);
     }
-    console.log(category.category_name);
     res.json({message: 'Category deleted', _id: category._id});
   } catch (error) {
     next(error);
