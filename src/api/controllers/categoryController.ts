@@ -1,7 +1,7 @@
 // TODO: Controller for the Category model
 
 import {Request, Response, NextFunction} from 'express';
-import {MessageResponse, PostMessage} from '../../types/MessageTypes';
+import {PostMessage} from '../../types/MessageTypes';
 import {Category} from '../../types/DBTypes';
 import CategoryModel from '../models/categoryModel';
 import CustomError from '../../classes/CustomError';
@@ -70,16 +70,18 @@ const categoryPut = async (
 
 const categoryDelete = async (
   req: Request<{id: string}>,
-  res: Response<MessageResponse>,
+  res: Response<PostMessage>,
   next: NextFunction
 ) => {
   try {
-    const category = await CategoryModel.findByIdAndDelete(req.params.id);
+    const category = (await CategoryModel.findByIdAndDelete(
+      req.params.id
+    )) as unknown as Category;
     if (!category) {
       throw new CustomError('Category not found', 404);
     }
-    console.log(category);
-    res.json({message: 'Category deleted'});
+    console.log(category.category_name);
+    res.json({message: 'Category deleted', _id: category._id});
   } catch (error) {
     next(error);
   }
