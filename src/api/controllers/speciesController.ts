@@ -4,7 +4,6 @@ import {PostMessage} from '../../types/MessageTypes';
 import {Species} from '../../types/DBTypes';
 import CustomError from '../../classes/CustomError';
 import SpeciesModel from '../models/speciesModel';
-import rectangleBounds from '../lib/rectangleBounds';
 
 const speciesListGet = async (
   _req: Request,
@@ -47,33 +46,16 @@ const speciesGetByBoundingBox = async (
   try {
     const {topRight, bottomLeft} = req.query;
     // query example: /species/area?topRight=40.73061,-73.935242&bottomLeft=40.71427,-74.00597
+    // longitude first, then latitude (opposite of google maps)
 
-    const rightCorner = {
-      lat: parseFloat(topRight.split(',')[0]),
-      lng: parseFloat(topRight.split(',')[1]),
-    };
+    const rightCorner = topRight.split(',');
 
-    const leftCorner = {
-      lat: parseFloat(bottomLeft.split(',')[0]),
-      lng: parseFloat(bottomLeft.split(',')[1]),
-    };
+    const leftCorner = bottomLeft.split(',');
 
-    // const bounds = rectangleBounds(rightCorner, leftCorner);
-    const bounds = {
-      coordinates: [
-        [18.0, 29.0],
-        [18.0, 33.0],
-        [24.0, 33.0],
-        [24.0, 29.0],
-        [18.0, 29.0],
-      ],
-    };
-
-    console.log(bounds.coordinates);
     const species = await SpeciesModel.find({
       location: {
         $geoWithin: {
-          $box: bounds,
+          $box: [leftCorner, rightCorner],
         },
       },
     })
@@ -91,8 +73,12 @@ const speciesPost = async (
   next: NextFunction
 ) => {
   try {
+    console.log('type of coordinate', typeof req.body.location.coordinates[0]);
     req.body.location = {
-      ...req.body.location,
+      coordinates: [
+        Number(req.body.location.coordinates[0]), // make sure it's a number
+        Number(req.body.location.coordinates[1]),
+      ],
       type: 'Point',
     };
 

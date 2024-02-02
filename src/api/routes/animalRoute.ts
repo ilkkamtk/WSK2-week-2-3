@@ -31,6 +31,11 @@ router
     validationErrors,
     animalPut
   )
-  .delete(param('id').isMongoId(), validationErrors, animalDelete);
+  .delete(
+    authenticate,
+    param('id').isMongoId(),
+    validationErrors,
+    animalDelete
+  );
 
 export default router;

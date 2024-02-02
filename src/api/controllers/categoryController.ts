@@ -2,11 +2,9 @@
 
 import {Request, Response, NextFunction} from 'express';
 import {PostMessage} from '../../types/MessageTypes';
-import {Category} from '../../types/DBTypes';
+import {Category, LoginUser} from '../../types/DBTypes';
 import CategoryModel from '../models/categoryModel';
 import CustomError from '../../classes/CustomError';
-import SpeciesModel from '../models/speciesModel';
-import AnimalModel from '../models/animalModel';
 
 const categoryListGet = async (
   _req: Request,
@@ -39,10 +37,13 @@ const categoryGet = async (
 
 const categoryPost = async (
   req: Request<{}, {}, Pick<Category, 'category_name'>>,
-  res: Response<PostMessage>,
+  res: Response<PostMessage, {user: LoginUser}>,
   next: NextFunction
 ) => {
   try {
+    if (!res.locals.user || res.locals.user.role !== 'admin') {
+      throw new CustomError('Unauthorized', 401);
+    }
     const category = await CategoryModel.create(req.body);
     res.status(201).json({message: 'Category created', _id: category._id});
   } catch (error) {

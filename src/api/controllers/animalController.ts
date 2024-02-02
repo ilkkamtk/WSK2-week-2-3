@@ -20,6 +20,10 @@ const animalListGet = async (
           path: 'category',
           select: '-__v',
         },
+      })
+      .populate({
+        path: 'owner',
+        select: '-__v -password -role',
       });
     res.json(animals);
   } catch (error) {
@@ -88,16 +92,21 @@ const animalPut = async (
 
 const animalDelete = async (
   req: Request<{id: string}>,
-  res: Response<PostMessage>,
+  res: Response<PostMessage, {user: LoginUser}>,
   next: NextFunction
 ) => {
   try {
+    // admin can delete any animal, user can delete only their own animals
+    const options =
+      res.locals.user.role === 'admin' ? {} : {owner: res.locals.user._id};
+
     const animal = (await AnimalModel.findOneAndDelete({
       _id: req.params.id,
-      owner: res.locals.user._id,
+      ...options,
     })) as unknown as Animal;
+
     if (!animal) {
-      throw new CustomError('Animal not found', 404);
+      throw new CustomError('Animal not found or not your animal', 404);
     }
     res.json({message: 'Animal deleted', _id: animal._id});
   } catch (error) {

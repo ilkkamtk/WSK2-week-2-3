@@ -3,7 +3,7 @@ import imageFromWikipedia from './functions/imageFromWikipedia';
 import {ErrorResponse} from './types/MessageTypes';
 import CustomError from './classes/CustomError';
 import {validationResult} from 'express-validator';
-import {LoginUser, Species, UserOutput} from './types/DBTypes';
+import {LoginUser, Species} from './types/DBTypes';
 import jwt from 'jsonwebtoken';
 
 const notFound = (req: Request, res: Response, next: NextFunction) => {

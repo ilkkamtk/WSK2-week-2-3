@@ -7,10 +7,8 @@
 // - checkToken - check if current user token is valid: return data from res.locals.user as UserOutput. No need for database query
 
 import {Request, Response, NextFunction} from 'express';
-import jwt from 'jsonwebtoken';
-import CustomError from '../../classes/CustomError';
-import {LoginUser, User, UserOutput} from '../../types/DBTypes';
-import {LoginResponse, MessageResponse} from '../../types/MessageTypes';
+import {User, UserOutput} from '../../types/DBTypes';
+import {MessageResponse} from '../../types/MessageTypes';
 import userModel from '../models/userModel';
 import bcrypt from 'bcryptjs';
 
