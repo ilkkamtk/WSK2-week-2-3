@@ -33,7 +33,16 @@ const animalGet = async (
   next: NextFunction
 ) => {
   try {
-    const animal = await AnimalModel.findById(req.params.id);
+    const animal = await AnimalModel.findById(req.params.id)
+      .select('-__v')
+      .populate({
+        path: 'species',
+        select: '-__v',
+        populate: {
+          path: 'category',
+          select: '-__v',
+        },
+      });
     if (!animal) {
       throw new CustomError('Animal not found', 404);
     }
