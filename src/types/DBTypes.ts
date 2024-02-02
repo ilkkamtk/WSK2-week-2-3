@@ -12,6 +12,7 @@ type Animal = {
   species: Types.ObjectId;
   birthdate: Date;
   gender: 'Male' | 'Female';
+  owner: Types.ObjectId | User;
 };
 
 type FullAnimal = Omit<Animal, 'species'> & {

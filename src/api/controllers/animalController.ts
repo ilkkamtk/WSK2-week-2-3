@@ -1,7 +1,7 @@
 // TODO: Controller for the Animal model
 import {Request, Response, NextFunction} from 'express';
 import {PostMessage} from '../../types/MessageTypes';
-import {Animal} from '../../types/DBTypes';
+import {Animal, LoginUser} from '../../types/DBTypes';
 import CustomError from '../../classes/CustomError';
 import AnimalModel from '../models/animalModel';
 
@@ -54,10 +54,11 @@ const animalGet = async (
 
 const animalPost = async (
   req: Request<{}, {}, Omit<Animal, '_id'>>,
-  res: Response<PostMessage>,
+  res: Response<PostMessage, {user: LoginUser}>,
   next: NextFunction
 ) => {
   try {
+    req.body.owner = res.locals.user._id;
     const animal = await AnimalModel.create(req.body);
     res.status(201).json({message: 'Animal created', _id: animal._id});
   } catch (error) {
@@ -91,9 +92,10 @@ const animalDelete = async (
   next: NextFunction
 ) => {
   try {
-    const animal = (await AnimalModel.findByIdAndDelete(
-      req.params.id
-    )) as unknown as Animal;
+    const animal = (await AnimalModel.findOneAndDelete({
+      _id: req.params.id,
+      owner: res.locals.user._id,
+    })) as unknown as Animal;
     if (!animal) {
       throw new CustomError('Animal not found', 404);
     }

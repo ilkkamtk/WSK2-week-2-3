@@ -9,7 +9,7 @@
 import {Request, Response, NextFunction} from 'express';
 import jwt from 'jsonwebtoken';
 import CustomError from '../../classes/CustomError';
-import {LoginUser, UserOutput} from '../../types/DBTypes';
+import {LoginUser, User, UserOutput} from '../../types/DBTypes';
 import {LoginResponse, MessageResponse} from '../../types/MessageTypes';
 import userModel from '../models/userModel';
 import bcrypt from 'bcryptjs';
@@ -28,12 +28,21 @@ const userListGet = async (
 };
 
 const userPost = async (
-  req: Request<{}, {}, Omit<UserOutput, '_id'>>,
+  req: Request<{}, {}, User>,
   res: Response<MessageResponse>,
   next: NextFunction
 ) => {
   try {
-    const user = await userModel.create(req.body);
+    const salt = bcrypt.genSaltSync(10);
+
+    const userInput = {
+      user_name: req.body.user_name,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, salt),
+      role: 'user',
+    };
+
+    const user = await userModel.create(userInput);
     console.log(user);
     res.status(201).json({message: 'User created'});
   } catch (error) {

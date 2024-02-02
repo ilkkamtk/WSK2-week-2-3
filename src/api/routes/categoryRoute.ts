@@ -7,7 +7,7 @@ import {
   categoryDelete,
 } from '../controllers/categoryController';
 import {body, param} from 'express-validator';
-import {validationErrors} from '../../middlewares';
+import {authenticate, validationErrors} from '../../middlewares';
 
 const router = express.Router();
 
@@ -15,6 +15,7 @@ router
   .route('/')
   .get(categoryListGet)
   .post(
+    authenticate,
     body('category_name').notEmpty().isString().escape(),
     validationErrors,
     categoryPost

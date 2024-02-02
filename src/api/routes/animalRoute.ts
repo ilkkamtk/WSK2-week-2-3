@@ -8,7 +8,7 @@ import {
   animalDelete,
 } from '../controllers/animalController';
 import {body, param} from 'express-validator';
-import {validationErrors} from '../../middlewares';
+import {authenticate, validationErrors} from '../../middlewares';
 
 const router = express.Router();
 
@@ -16,6 +16,7 @@ router
   .route('/')
   .get(animalListGet)
   .post(
+    authenticate,
     body('animal_name').notEmpty().isString().escape(),
     validationErrors,
     animalPost

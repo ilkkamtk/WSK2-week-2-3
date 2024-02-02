@@ -23,6 +23,11 @@ const animalSchema = new mongoose.Schema<Animal>({
     enum: ['Male', 'Female'],
     required: true,
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 
 const AnimalModel = mongoose.model<Animal>('Animal', animalSchema);

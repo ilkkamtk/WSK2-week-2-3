@@ -3,7 +3,8 @@ import imageFromWikipedia from './functions/imageFromWikipedia';
 import {ErrorResponse} from './types/MessageTypes';
 import CustomError from './classes/CustomError';
 import {validationResult} from 'express-validator';
-import {Species} from './types/DBTypes';
+import {LoginUser, Species, UserOutput} from './types/DBTypes';
+import jwt from 'jsonwebtoken';
 
 const notFound = (req: Request, res: Response, next: NextFunction) => {
   const error = new CustomError(`🔍 - Not Found - ${req.originalUrl}`, 404);
@@ -56,4 +57,45 @@ const validationErrors = (req: Request, _res: Response, next: NextFunction) => {
   next();
 };
 
-export {notFound, errorHandler, getWikiImage, validationErrors};
+const authenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const bearer = req.headers.authorization;
+    if (!bearer) {
+      next(new CustomError('No token provided', 401));
+      return;
+    }
+
+    const token = bearer.split(' ')[1];
+
+    if (!token) {
+      next(new CustomError('No token provided', 401));
+      return;
+    }
+
+    const tokenContent = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as LoginUser;
+
+    // check if user exists in database (optional)
+    // const user = await userModel.findById(tokenContent._id);
+
+    // if (!user) {
+    //   next(new CustomError('Token not valid', 403));
+    //   return;
+    // }
+
+    // add user to req locals to be used in other middlewares / controllers
+    res.locals.user = tokenContent;
+
+    next();
+  } catch (error) {
+    next(new CustomError((error as Error).message, 400));
+  }
+};
+
+export {notFound, errorHandler, getWikiImage, validationErrors, authenticate};
