@@ -6,8 +6,9 @@ import {
   speciesPost,
   speciesPut,
   speciesDelete,
+  speciesGetByBoundingBox,
 } from '../controllers/speciesController';
-import {body, param} from 'express-validator';
+import {body, param, query} from 'express-validator';
 import {getWikiImage, validationErrors} from '../../middlewares';
 
 const router = express.Router();
@@ -25,6 +26,15 @@ router
     body('location.coordinates.*').isNumeric(),
     validationErrors,
     speciesPost
+  );
+
+router
+  .route('/area')
+  .get(
+    query('topRight').notEmpty(),
+    query('bottomLeft').notEmpty(),
+    validationErrors,
+    speciesGetByBoundingBox
   );
 
 router

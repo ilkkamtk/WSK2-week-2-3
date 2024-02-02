@@ -1,5 +1,5 @@
 import {Point} from 'geojson';
-import {Types} from 'mongoose';
+import {Document, Types} from 'mongoose';
 
 type Category = {
   _id: Types.ObjectId;
@@ -30,4 +30,31 @@ type FullSpecies = Omit<Species, 'category'> & {
   category: Category;
 };
 
-export {Category, Animal, Species, FullSpecies, FullAnimal};
+type User = Partial<Document> & {
+  _id: Types.ObjectId | string;
+  user_name: string;
+  email: string;
+  role: 'user' | 'admin';
+  password: string;
+};
+
+type UserOutput = Omit<User, 'password' | 'role'>;
+
+type UserInput = Omit<User, '_id' | 'role'>;
+
+type UserTest = Partial<User>;
+
+type LoginUser = Omit<User, 'password'>;
+
+export {
+  Category,
+  Animal,
+  Species,
+  FullSpecies,
+  FullAnimal,
+  User,
+  UserOutput,
+  UserInput,
+  UserTest,
+  LoginUser,
+};
