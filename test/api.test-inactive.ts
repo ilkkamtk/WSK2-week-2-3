@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
-import DBMessageResponse from '../src/interfaces/DBMessageResponse';
+// import DBMessageResponse from '../src/types/MessageTypes';
 import mongoose from 'mongoose';
 import app from '../src/app';
 import {Types} from 'mongoose';

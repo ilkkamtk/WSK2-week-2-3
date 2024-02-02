@@ -18,11 +18,11 @@ router
   .post(
     body('species_name').notEmpty().isString().escape(),
     getWikiImage,
-    body('category').notEmpty().isMongoId(),
+    body('image').notEmpty().isString(),
+    body('category').notEmpty(),
     body('location').notEmpty().isObject(),
     body('location.coordinates').notEmpty().isArray(),
     body('location.coordinates.*').isNumeric(),
-    body('image').notEmpty().isString(),
     validationErrors,
     speciesPost
   );

@@ -27,7 +27,7 @@ const errorHandler = (
 
 const getWikiImage = async (
   req: Request<{}, {}, Omit<Species, '_id'>>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   try {

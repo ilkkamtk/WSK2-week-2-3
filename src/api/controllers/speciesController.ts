@@ -44,6 +44,7 @@ const speciesPost = async (
       ...req.body.location,
       type: 'Point',
     };
+
     const species = await SpeciesModel.create(req.body);
     res.status(201).json({message: 'Species created', _id: species._id});
   } catch (error) {

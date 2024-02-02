@@ -5,6 +5,8 @@ import {PostMessage} from '../../types/MessageTypes';
 import {Category} from '../../types/DBTypes';
 import CategoryModel from '../models/categoryModel';
 import CustomError from '../../classes/CustomError';
+import SpeciesModel from '../models/speciesModel';
+import AnimalModel from '../models/animalModel';
 
 const categoryListGet = async (
   _req: Request,
