@@ -5,6 +5,8 @@ import {PostMessage} from '../../types/MessageTypes';
 import {Category, LoginUser} from '../../types/DBTypes';
 import CategoryModel from '../models/categoryModel';
 import CustomError from '../../classes/CustomError';
+import AnimalModel from '../models/animalModel';
+import SpeciesModel from '../models/speciesModel';
 
 const categoryListGet = async (
   _req: Request,
@@ -77,6 +79,16 @@ const categoryDelete = async (
   next: NextFunction
 ) => {
   try {
+    // delete animals with this category
+    const species = await SpeciesModel.find({category: req.params.id});
+    for (const specie of species) {
+      await AnimalModel.deleteMany({
+        species: specie._id,
+      });
+    }
+    // delete species with this category
+    await SpeciesModel.deleteMany({category: req.params.id});
+
     const category = (await CategoryModel.findByIdAndDelete(
       req.params.id
     )) as unknown as Category;
